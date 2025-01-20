@@ -89,3 +89,21 @@ The Chat Project is a Django-based web application that allows users to communic
 
 - Register a new account or log in with an existing account.
 - Join a chat room after logging with one id on a browser and login with a second id on another browser then select the username used for signin and start chatting
+
+## Screenshot of working application
+
+user 1 sends a message :
+
+![alt text](image.png)
+
+user 2 gets the message:
+
+![alt text](image-1.png)
+
+user 2 sends a message:
+
+![alt text](image-2.png)
+
+user 1 receives the message:
+
+![alt text](image-3.png)
