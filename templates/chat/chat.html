@@ -1,0 +1,38 @@
+{% extends 'chat/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="header">
+        <div class="user-info">
+            <span data-current-user="{{ request.user.username }}">Welcome, {{ request.user.username }}</span>
+            <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+        </div>
+    </div>
+    
+    <div class="chat-interface">
+        <div class="users-menu">
+            <h3>Online Users</h3>
+            <div class="users-list">
+                {% for user in users %}
+                    <div class="user-item" data-username="{{ user.username }}">
+                        {{ user.username }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="chat-area">
+            <div id="chat-messages"></div>
+            <div class="chat-input">
+                <input type="text" id="chat-message-input" placeholder="Type your message...">
+                <button id="chat-message-submit">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/chat.js' %}"></script>
+{% endblock %}

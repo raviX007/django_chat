@@ -1,0 +1,81 @@
+{% extends 'chat/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h2>Register</h2>
+        
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" class="auth-form" id="registerForm" novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_username">Username:</label>
+                <input type="text"
+                       name="username"
+                       id="id_username"
+                       required
+                       maxlength="150"
+                       class="auth-input"
+                       value="{{ form.username.value|default:'' }}">
+                <div class="validation-error">
+                    {% if form.username.errors %}
+                        {{ form.username.errors.0 }}
+                    {% endif %}
+                </div>
+                <small class="help-text">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</small>
+            </div>
+            <div class="form-group">
+                <label for="id_password1">Password:</label>
+                <input type="password"
+                       name="password1"
+                       id="id_password1"
+                       required
+                       class="auth-input">
+                <div class="validation-error">
+                    {% if form.password1.errors %}
+                        {{ form.password1.errors.0 }}
+                    {% endif %}
+                </div>
+                <small class="help-text">
+                    • Must be at least 8 characters<br>
+                    • Can't be entirely numeric<br>
+                    • Can't be too similar to your personal information<br>
+                    • Can't be a commonly used password
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="id_password2">Password confirmation:</label>
+                <input type="password"
+                       name="password2"
+                       id="id_password2"
+                       required
+                       class="auth-input">
+                <div class="validation-error">
+                    {% if form.password2.errors %}
+                        {{ form.password2.errors.0 }}
+                    {% endif %}
+                </div>
+                <small class="help-text">Enter the same password as before, for verification.</small>
+            </div>
+            <button type="submit" class="auth-button">Register</button>
+        </form>
+        <div class="auth-links">
+            <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/register.js' %}"></script>
+{% endblock %}

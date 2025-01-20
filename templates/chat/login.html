@@ -1,0 +1,46 @@
+{% extends 'chat/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h2>Login</h2>
+        {% if form.errors %}
+            <div class="error-message">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <form method="post" class="auth-form" id="loginForm" novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_username">Username:</label>
+                <input type="text"
+                       name="username"
+                       id="id_username"
+                       required
+                       class="auth-input">
+                <div class="validation-error"></div>
+            </div>
+            <div class="form-group">
+                <label for="id_password">Password:</label>
+                <input type="password"
+                       name="password"
+                       id="id_password"
+                       required
+                       class="auth-input">
+                <div class="validation-error"></div>
+            </div>
+            <button type="submit" class="auth-button">Login</button>
+        </form>
+        <div class="auth-links">
+            <p>New user? <a href="{% url 'register' %}">Register here</a></p>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="{% static 'js/login.js' %}"></script>
+{% endblock %}
+{% endblock %}

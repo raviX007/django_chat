@@ -1,0 +1,7 @@
+Django
+channels
+asgiref
+daphne
+psycopg2-binary
+whitenoise
+python-decouple
