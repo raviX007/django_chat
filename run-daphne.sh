@@ -1,2 +1,1 @@
-export DJANGO_SETTINGS_MODULE=chat_project.settings
-daphne -b 0.0.0.0 -p 8000 chat_project.asgi:application
+python3 -m daphne chat_project.asgi:application -b 0.0.0.0 -p 8000
