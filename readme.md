@@ -104,6 +104,6 @@ user 2 sends a message:
 
 ![alt text](image-2.png)
 
-user 1 receives the message:
+user 1 receives the message :
 
 ![alt text](image-3.png)
