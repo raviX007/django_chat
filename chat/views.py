@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db import IntegrityError
 from .models import Message
+from django.http import JsonResponse
 
 def index(request):
     if request.user.is_authenticated:
@@ -67,3 +68,6 @@ def chat(request):
         'users': users,
     }
     return render(request, 'chat/chat.html', context)
+
+def health(request):
+    return JsonResponse({"status": "Service is up and running."})

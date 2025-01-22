@@ -1,0 +1,55 @@
+# .github/workflows/deploy-to-ec2.yml
+name: Deploy to EC2
+
+on:
+  workflow_run:
+    workflows: ["Build and Push to ECR"]
+    types:
+      - completed
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  REPOSITORY_NAME: ${{ vars.REPOSITORY_NAME }}
+  EC2_USERNAME: ${{ vars.EC2_USERNAME }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ env.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "Logging into ECR..."
+            aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+
+            echo "Pulling latest image..."
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
+
+            echo "Stopping and removing existing container..."
+            docker stop django-app || true
+            docker rm django-app || true
+
+            echo "Cleaning up old images..."
+            docker system prune -af
+
+            echo "Starting new container..."
+            docker run -d --name django-app \
+              -p 8000:8000 \
+              --restart unless-stopped \
+              ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
+
+            echo "Deployment completed. Container status:"
+            docker ps | grep django-app
