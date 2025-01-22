@@ -1,10 +1,7 @@
 #!/bin/bash
 
-# Get secrets with error handling
-if ! aws secretsmanager get-secret-value --secret-id django-chat-app-env --region ap-south-1 --query SecretString --output text > .env; then
-   echo "Failed to fetch secrets from AWS Secrets Manager"
-   exit 1
-fi
+# Get secrets and convert JSON to env format
+aws secretsmanager get-secret-value --secret-id django-chat-app-env --region ap-south-1 --query SecretString --output text | jq -r 'to_entries | .[] | .key + "=" + .value' > .env
 
 # Source the environment variables
 set -a
