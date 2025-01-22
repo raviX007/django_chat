@@ -33,6 +33,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             echo "Logging into ECR..."
+            echo ${{ secrets.EC2_SSH_KEY }}
             aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
 
             echo "Pulling latest image..."
