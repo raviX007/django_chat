@@ -5,7 +5,12 @@ WORKDIR /app
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     postgresql-client \
-    && rm -rf /var/lib/apt/lists/*
+    curl \
+    unzip \
+    && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+    && unzip awscliv2.zip \
+    && ./aws/install \
+    && rm -rf /var/lib/apt/lists/* awscliv2.zip aws/
 
 # Install Python dependencies
 COPY requirements.txt .
@@ -17,12 +22,17 @@ COPY . .
 # Create directory for static files
 RUN mkdir -p staticfiles
 
+# Set environment variables for build time
+ARG DJANGO_SETTINGS_MODULE=chat_project.settings
+ARG STATIC_ROOT=/app/staticfiles
+ENV DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
+ENV STATIC_ROOT=${STATIC_ROOT}
+
 # Collect static files during build
 RUN python manage.py collectstatic --noinput
 
-# Set environment variables
+# Set runtime environment variables
 ENV PYTHONUNBUFFERED=1
-ENV DJANGO_SETTINGS_MODULE=chat_project.settings
 
 # Expose port
 EXPOSE 8000

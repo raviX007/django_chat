@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# Get secrets
-aws secretsmanager get-secret-value --secret-id django-env --region ap-south-1 --query SecretString --output text > .env
+# Get secrets with error handling
+if ! aws secretsmanager get-secret-value --secret-id django-env --region ap-south-1 --query SecretString --output text > .env; then
+    echo "Failed to fetch secrets from AWS Secrets Manager"
+    exit 1
+fi
 # Source the environment variables
 set -a
 source .env
